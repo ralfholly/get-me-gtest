@@ -14,13 +14,17 @@ $(error Please define VERSION, ie. run `make VERSION=release-1.8.0' or `make lis
 endif
 endif
 
-.PHONY: list all
+.PHONY: list all fetch build
 
-all:
+all: build
+
+build: fetch
+	cd $(GOOGLE_TEST_BIN) ; cmake $(CMAKE_ARGS) . ; make -j
+
+fetch:
 	wget $(GOOGLE_TEST_ARCHIVE_URL)
 	tar xf $(GOOGLE_TEST_ARCHIVE)
 	rm $(GOOGLE_TEST_ARCHIVE)
-	cd $(GOOGLE_TEST_BIN) ; cmake . ; make -j
 
 list:
 	$(eval versions := $(shell wget $(GOOGLE_TEST_TAGS_URL) -O - -q | grep \"name\" | sed -r -e 's|\s*\"name\"\s*:\s*\"([^"]+)\"\s*,|\1|'))
